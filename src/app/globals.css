@@ -100,59 +100,65 @@ html[data-style="terracotta"][data-theme="light"] {
   --sidebar-ring: var(--elan-terracotta);
 }
 
-/* Terracotta – dark */
+/* Terracotta – dark (version plus neutre) */
 .dark,
 html[data-style="terracotta"][data-theme="dark"] {
   --radius: 0.625rem;
 
+  /* On garde la palette de marque, proche de la light */
   --elan-rust: #f2e7df;
-  --elan-terracotta: #f29d79;
-  --elan-moss: #7f8a85;
-  --elan-wheat: #e2b873;
-  --elan-peach: #f2b69a;
-  --elan-cream: #1e110f;
+  --elan-terracotta: #f29b7a;
+  --elan-moss: #9ca5a0;
+  --elan-wheat: #e0b87a;
+  --elan-peach: #f2b59a;
+  --elan-cream: #140f0c;
 
-  --background: #1b0f0d;
-  --foreground: #f2e7df;
+  /* Fond très sombre, neutre chaud */
+  --background: #12100f;
+  --foreground: #f5ebe2;
 
-  --card: #241311;
-  --card-foreground: #f2e7df;
+  --card: #1b1512;
+  --card-foreground: #f5ebe2;
 
-  --popover: #241311;
-  --popover-foreground: #f2e7df;
+  --popover: #1b1512;
+  --popover-foreground: #f5ebe2;
 
-  --primary: #f29d79;
+  /* Terracotta en accent principal */
+  --primary: #f29b7a;
   --primary-foreground: #2b1511;
 
-  --secondary: #3a211d;
-  --secondary-foreground: #f2e7df;
+  /* Gris/brun chaud pour le secondaire */
+  --secondary: #25201d;
+  --secondary-foreground: #f5ebe2;
 
-  --muted: #3a211d;
-  --muted-foreground: #c4cac3;
+  --muted: #26201c;
+  --muted-foreground: #cbbeb2;
 
-  --accent: #3f2a1d;
-  --accent-foreground: #f2e7df;
+  --accent: #2f2621;
+  --accent-foreground: #f5ebe2;
 
-  --destructive: #ff6b6b;
+  --destructive: #f97373;
 
-  --border: #3a2620;
-  --input: #3a2620;
-  --ring: #f29d79;
+  --border: #3a2c25;
+  --input: #3a2c25;
+  --ring: #f29b7a;
 
-  --chart-1: #f29d79;
-  --chart-2: #f2b69a;
-  --chart-3: #e2b873;
-  --chart-4: #7f8a85;
-  --chart-5: #f2e7df;
+  /* Charts */
+  --chart-1: #f29b7a; /* terracotta */
+  --chart-2: #f2b59a; /* peach */
+  --chart-3: #e0b87a; /* wheat */
+  --chart-4: #9ca5a0; /* moss */
+  --chart-5: #f5ebe2; /* light */
 
-  --sidebar: #1b0f0d;
-  --sidebar-foreground: #f2e7df;
-  --sidebar-primary: #f29d79;
+  /* Sidebar */
+  --sidebar: #12100f;
+  --sidebar-foreground: #f5ebe2;
+  --sidebar-primary: #f29b7a;
   --sidebar-primary-foreground: #2b1511;
-  --sidebar-accent: #3a2620;
-  --sidebar-accent-foreground: #f2e7df;
-  --sidebar-border: #3a2620;
-  --sidebar-ring: #f29d79;
+  --sidebar-accent: #26201c;
+  --sidebar-accent-foreground: #f5ebe2;
+  --sidebar-border: #3a2c25;
+  --sidebar-ring: #f29b7a;
 }
 
 @layer base {
