@@ -14,6 +14,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 type HeaderVariant = "default" | "search" | "compact";
 
@@ -37,6 +39,8 @@ export function Header({ variant = "default" }: HeaderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarInitials, setAvatarInitials] = useState<string>("ME");
+
+  const { theme, setMode } = useTheme();
 
   const showSearch =
     variant === "search" ||
@@ -117,6 +121,10 @@ export function Header({ variant = "default" }: HeaderProps) {
     router.push("/login");
   };
 
+  const handleToggleTheme = () => {
+    setMode(theme.mode === "light" ? "dark" : "light");
+  };
+  
   return (
     <header className="border-b bg-background/80">
       <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-6 py-4">
@@ -169,18 +177,31 @@ export function Header({ variant = "default" }: HeaderProps) {
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleGoToAccount}>
-                  Mon compte
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleGoToMessages}>
-                  Mes messages
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  Se déconnecter
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleGoToAccount}>
+                    Mon compte
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleGoToMessages}>
+                    Mes messages
+                  </DropdownMenuItem>
+                
+                  {/* 👇 Nouveau : switch thème */}
+                  <DropdownMenuItem onClick={handleToggleTheme}>
+                    <span className="mr-2 flex h-4 w-4 items-center justify-center">
+                      {theme.mode === "light" ? (
+                        <Moon className="h-4 w-4" />
+                      ) : (
+                        <Sun className="h-4 w-4" />
+                      )}
+                    </span>
+                    {theme.mode === "light" ? "Mode sombre" : "Mode clair"}
+                  </DropdownMenuItem>
+                
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Se déconnecter
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
             </DropdownMenu>
           )}
         </div>
