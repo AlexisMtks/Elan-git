@@ -21,6 +21,15 @@ interface HeaderProps {
   variant?: HeaderVariant;
 }
 
+const getInitials = (name: string): string => {
+  return name
+    .split(" ")
+    .filter((part: string) => part.trim().length > 0)
+    .map((part: string) => part.trim()[0]!.toUpperCase())
+    .slice(0, 2)
+    .join("");
+};
+
 export function Header({ variant = "default" }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -74,13 +83,7 @@ export function Header({ variant = "default" }: HeaderProps) {
         user.email ||
         "ME";
 
-      const initials = baseName
-        .split(" ")
-        .filter(Boolean)
-        .map((part) => part[0]?.toUpperCase())
-        .slice(0, 2)
-        .join("");
-
+      const initials = getInitials(baseName);
       setAvatarInitials(initials || "ME");
     }
 
