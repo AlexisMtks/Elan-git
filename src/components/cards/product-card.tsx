@@ -56,7 +56,7 @@ export function ProductCard({
                 >
                     {/* Image avec padding régulier autour */}
                     <div className="p-2 pb-0">
-                        <div className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-muted">
+                        <div className="aspect-[5/6] w-full overflow-hidden rounded-xl bg-muted">
                             {imageUrl ? (
                                 <img
                                     src={imageUrl}
