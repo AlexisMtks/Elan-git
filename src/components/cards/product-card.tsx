@@ -50,19 +50,19 @@ export function ProductCard({
         <Card className="overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm">
             <CardContent className="p-0">
                 <Wrapper href={clickable ? targetHref : undefined} className="block">
-                    {/* Image en haut de la card */}
-                    <div className="relative w-full overflow-hidden rounded-t-2xl">
-                      <div className="aspect-[4/3] w-full bg-muted flex items-center justify-center">
+                    {/* Image en haut de la carte */}
+                    <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
                         {imageUrl ? (
-                          <img
-                            src={imageUrl}
-                            alt={title}
-                            className="h-full w-full object-cover"
-                          />
+                            <img
+                                src={imageUrl}
+                                alt={title}
+                                className="h-full w-full object-cover"
+                            />
                         ) : (
-                          <span className="text-[11px] text-muted-foreground">Photo à venir</span>
+                            <div className="flex h-full w-full items-center justify-center text-[11px] text-muted-foreground">
+                                Photo à venir
+                            </div>
                         )}
-                      </div>
                     </div>
 
                     {/* Contenu texte */}
