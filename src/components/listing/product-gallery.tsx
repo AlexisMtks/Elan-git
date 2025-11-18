@@ -10,9 +10,9 @@ export function ProductGallery({ images }: ProductGalleryProps) {
     const thumbnails = hasImages ? images.slice(0, 4) : [];
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-4">
             {/* Image principale */}
-            <Card className="aspect-[16/9] w-full max-h-[420px] rounded-2xl bg-muted">
+            <Card className="aspect-[4/3] w-full overflow-hidden rounded-2xl bg-muted">
                 {mainImage ? (
                     <img
                         src={mainImage}
@@ -28,11 +28,11 @@ export function ProductGallery({ images }: ProductGalleryProps) {
 
             {/* Miniatures */}
             {thumbnails.length > 1 && (
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                     {thumbnails.map((url, index) => (
                         <Card
                             key={url ?? index}
-                            className="aspect-square w-16 rounded-xl bg-muted"
+                            className="aspect-square w-20 overflow-hidden rounded-xl bg-muted"
                         >
                             {url ? (
                                 <img
