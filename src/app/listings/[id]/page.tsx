@@ -93,56 +93,64 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
         .eq("status", "active")
         .limit(4);
 
-const related = relatedListings?.map((l) => ({
-  id: l.id.toString(),
-  title: l.title,
-  price: l.price / 100,
-  location: l.city ?? undefined,
-}));
+    const related = relatedListings?.map((l) => ({
+        id: l.id.toString(),
+        title: l.title,
+        price: l.price / 100,
+        location: l.city ?? undefined,
+    }));
 
-return (
-  <div className="space-y-8">
-    {/* Top: galerie + résumé */}
-    <section className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1.1fr)]">
-      <div>
-        <ProductGallery images={images} />
-      </div>
+    return (
+        <div className="mx-auto w-full max-w-6xl space-y-10 px-4 py-6 lg:py-8">
+            {/* Top: galerie + résumé */}
+            <section className="grid gap-10 items-start lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.9fr)]">
+                {/* Colonne image */}
+                <div className="flex justify-center lg:justify-start">
+                    <div className="w-full max-w-[720px]">
+                        <ProductGallery images={images} />
+                    </div>
+                </div>
 
-      <div className="space-y-6">
-        <div className="space-y-4">
-          <PageTitle title={listing.title} />
-          <p className="text-2xl font-semibold">{listing.price / 100} €</p>
+                {/* Colonne droite */}
+                <div className="w-full lg:max-w-sm lg:ml-auto space-y-6">
+                    <div className="space-y-4">
+                        <PageTitle title={listing.title} />
+                        <p className="text-3xl font-semibold">
+                            {listing.price / 100} €
+                        </p>
 
-          {/* Boutons client */}
-          <ListingActions />
+                        {/* Boutons client */}
+                        <ListingActions />
 
-          <p className="text-sm text-muted-foreground">{location}</p>
+                        <p className="text-sm text-muted-foreground">
+                            {location}
+                        </p>
+                    </div>
+
+                    <TechnicalDetails
+                        seller={seller}
+                        category={listing.category_id?.toString() ?? "-"}
+                        brand={listing.brand ?? "-"}
+                        size={listing.size ?? "-"}
+                        condition={listing.condition ?? "-"}
+                        location={location}
+                    />
+                </div>
+            </section>
+
+            {/* Description */}
+            <section className="space-y-3">
+                <h2 className="text-lg font-semibold">Description</h2>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                    {listing.description ??
+                        "Aucune description n’a été fournie pour cette annonce."}
+                </p>
+            </section>
+
+            {/* Produits similaires */}
+            {related && related.length > 0 && (
+                <ProductCarousel title="Vous pourriez aussi aimer" items={related} />
+            )}
         </div>
-
-        <TechnicalDetails
-          seller={seller}
-          category={listing.category_id?.toString() ?? "-"}
-          brand={listing.brand ?? "-"}
-          size={listing.size ?? "-"}
-          condition={listing.condition ?? "-"}
-          location={location}
-        />
-      </div>
-    </section>
-
-    {/* Description */}
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold">Description</h2>
-      <p className="text-sm leading-relaxed text-muted-foreground">
-        {listing.description ??
-          "Aucune description n’a été fournie pour cette annonce."}
-      </p>
-    </section>
-
-    {/* Produits similaires */}
-    {related && related.length > 0 && (
-      <ProductCarousel title="Vous pourriez aussi aimer" items={related} />
-    )}
-  </div>
- );
+    );
 }
