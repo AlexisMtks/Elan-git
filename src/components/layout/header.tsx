@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/lib/supabaseClient";
 import {
   DropdownMenu,
@@ -26,24 +26,65 @@ export function Header({ variant = "default" }: HeaderProps) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarInitials, setAvatarInitials] = useState<string>("ME");
 
   const showSearch =
-      variant === "search" ||
-      ["/", "/research", "/messages", "/account", "/profile"].some((p) =>
-          pathname.startsWith(p),
-      );
+    variant === "search" ||
+    ["/", "/research", "/messages", "/account", "/profile"].some((p) =>
+      pathname.startsWith(p),
+    );
 
-  // Déterminer si l’utilisateur est connecté
+  // Déterminer si l’utilisateur est connecté + charger son avatar
   useEffect(() => {
-    async function checkAuth() {
+    async function checkAuthAndProfile() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      setIsAuthenticated(!!user);
+      if (!user) {
+        setIsAuthenticated(false);
+        setAvatarUrl(null);
+        setAvatarInitials("ME");
+        return;
+      }
+
+      setIsAuthenticated(true);
+
+      // Récupération du profil pour l’avatar
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("avatar_url, display_name, first_name, last_name")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.avatar_url) {
+        setAvatarUrl(profile.avatar_url);
+      } else {
+        setAvatarUrl(null);
+      }
+
+      // Initiales pour le fallback (display_name > prénom/nom > email > ME)
+      const baseName =
+        profile?.display_name ||
+        [profile?.first_name, profile?.last_name]
+          .filter(Boolean)
+          .join(" ")
+          .trim() ||
+        user.email ||
+        "ME";
+
+      const initials = baseName
+        .split(" ")
+        .filter(Boolean)
+        .map((part) => part[0]?.toUpperCase())
+        .slice(0, 2)
+        .join("");
+
+      setAvatarInitials(initials || "ME");
     }
 
-    void checkAuth();
+    void checkAuthAndProfile();
   }, []);
 
   const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -68,75 +109,79 @@ export function Header({ variant = "default" }: HeaderProps) {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsAuthenticated(false);
+    setAvatarUrl(null);
+    setAvatarInitials("ME");
     router.push("/login");
   };
 
   return (
-      <header className="border-b bg-background/80">
-        <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-6 py-4">
-          {/* Logo */}
-          <Link href="/" className="font-serif text-2xl">
-            Élan
+    <header className="border-b bg-background/80">
+      <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-6 py-4">
+        {/* Logo */}
+        <Link href="/" className="font-serif text-2xl">
+          Élan
+        </Link>
+
+        {/* Barre de recherche */}
+        {showSearch && (
+          <form className="flex-1" onSubmit={handleSearchSubmit}>
+            <Input
+              placeholder="Rechercher…"
+              className="rounded-full"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </form>
+        )}
+
+        <div className="flex items-center gap-3">
+          <Link href="/sell">
+            <Button>Vendre un article</Button>
           </Link>
 
-          {/* Barre de recherche */}
-          {showSearch && (
-              <form className="flex-1" onSubmit={handleSearchSubmit}>
-                <Input
-                    placeholder="Rechercher…"
-                    className="rounded-full"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-              </form>
-          )}
-
-          <div className="flex items-center gap-3">
-            <Link href="/sell">
-              <Button>Vendre un article</Button>
+          {/* Icône / menu compte */}
+          {!isAuthenticated ? (
+            // Utilisateur non connecté : lien direct vers la page de connexion
+            <Link href="/login" aria-label="Mon compte">
+              <Avatar className="h-8 w-8 cursor-pointer">
+                <AvatarFallback className="text-xs">ME</AvatarFallback>
+              </Avatar>
             </Link>
-
-            {/* Icône / menu compte */}
-            {!isAuthenticated ? (
-                // Utilisateur non connecté : lien direct vers la page de connexion
-                <Link href="/login" aria-label="Mon compte">
+          ) : (
+            // Utilisateur connecté : avatar réel (ou initiales) dans le menu
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Menu compte"
+                  className="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+                >
                   <Avatar className="h-8 w-8 cursor-pointer">
-                    <AvatarFallback className="text-xs">ME</AvatarFallback>
+                    {avatarUrl && (
+                      <AvatarImage src={avatarUrl} alt="Photo de profil" />
+                    )}
+                    <AvatarFallback className="text-xs">
+                      {avatarInitials}
+                    </AvatarFallback>
                   </Avatar>
-                </Link>
-            ) : (
-                // Utilisateur connecté : menu burger / dropdown sur l’avatar
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                        type="button"
-                        aria-label="Menu compte"
-                        className="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
-                    >
-                      <Avatar className="h-8 w-8 cursor-pointer">
-                        <AvatarFallback className="text-xs">ME</AvatarFallback>
-                      </Avatar>
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleGoToAccount}>
-                      Mon compte
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleGoToMessages}>
-                      Mes messages
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        variant="destructive"
-                        onClick={handleLogout}
-                    >
-                      Se déconnecter
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-            )}
-          </div>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleGoToAccount}>
+                  Mon compte
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleGoToMessages}>
+                  Mes messages
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  Se déconnecter
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
-      </header>
+      </div>
+    </header>
   );
 }
